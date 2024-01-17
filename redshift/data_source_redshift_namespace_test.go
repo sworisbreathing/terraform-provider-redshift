@@ -7,13 +7,16 @@ import (
 )
 
 func TestAccDataSourceRedshiftNamespace(t *testing.T) {
+	ctx, cancel := testContext(t)
+	defer cancel()
+
 	config := `
 data "redshift_namespace" "namespace" {
 
 }
 `
 	resource.ParallelTest(t, resource.TestCase{
-		PreCheck:  func() { testAccPreCheck(t) },
+		PreCheck:  func() { testAccPreCheck(ctx, t) },
 		Providers: testAccProviders,
 		Steps: []resource.TestStep{
 			{

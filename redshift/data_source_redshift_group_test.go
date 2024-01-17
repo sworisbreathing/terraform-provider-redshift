@@ -10,10 +10,13 @@ import (
 )
 
 func TestAccDataSourceRedshiftGroup_basic(t *testing.T) {
+	ctx, cancel := testContext(t)
+	defer cancel()
+
 	groupName := strings.ReplaceAll(acctest.RandomWithPrefix("tf_acc_data_basic"), "-", "_")
 	userName := strings.ReplaceAll(acctest.RandomWithPrefix("tf_acc_data_basic"), "-", "_")
 	resource.ParallelTest(t, resource.TestCase{
-		PreCheck:     func() { testAccPreCheck(t) },
+		PreCheck:     func() { testAccPreCheck(ctx, t) },
 		Providers:    testAccProviders,
 		CheckDestroy: testAccCheckRedshiftGroupDestroy,
 		Steps: []resource.TestStep{

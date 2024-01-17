@@ -12,6 +12,9 @@ import (
 )
 
 func TestAccRedshiftDatasharePrivilege_Namespace(t *testing.T) {
+	ctx, cancel := testContext(t)
+	defer cancel()
+
 	_ = getEnvOrSkip("REDSHIFT_DATASHARE_SUPPORTED", t)
 	consumerNamespace := getEnvOrSkip("REDSHIFT_DATASHARE_CONSUMER_NAMESPACE", t)
 	shareName := strings.ReplaceAll(acctest.RandomWithPrefix("tf_acc_datashare_privilege_namespace"), "-", "_")
@@ -27,7 +30,7 @@ resource "redshift_datashare_privilege" "consumer_namespace" {
 `, dataShareNameAttr, shareName, datasharePrivilegeShareNameAttr, datasharePrivilegeNamespaceAttr, consumerNamespace)
 
 	resource.ParallelTest(t, resource.TestCase{
-		PreCheck:     func() { testAccPreCheck(t) },
+		PreCheck:     func() { testAccPreCheck(ctx, t) },
 		Providers:    testAccProviders,
 		CheckDestroy: testAccCheckRedshiftDatasharePrivilegeDestroy,
 		Steps: []resource.TestStep{
@@ -43,6 +46,9 @@ resource "redshift_datashare_privilege" "consumer_namespace" {
 }
 
 func TestAccRedshiftDatasharePrivilege_Account(t *testing.T) {
+	ctx, cancel := testContext(t)
+	defer cancel()
+
 	_ = getEnvOrSkip("REDSHIFT_DATASHARE_SUPPORTED", t)
 	consumerAccount := getEnvOrSkip("REDSHIFT_DATASHARE_CONSUMER_ACCOUNT", t)
 	shareName := strings.ReplaceAll(acctest.RandomWithPrefix("tf_acc_datashare_privilege_account"), "-", "_")
@@ -58,7 +64,7 @@ resource "redshift_datashare_privilege" "consumer_account" {
 `, dataShareNameAttr, shareName, datasharePrivilegeShareNameAttr, datasharePrivilegeAccountAttr, consumerAccount)
 
 	resource.ParallelTest(t, resource.TestCase{
-		PreCheck:     func() { testAccPreCheck(t) },
+		PreCheck:     func() { testAccPreCheck(ctx, t) },
 		Providers:    testAccProviders,
 		CheckDestroy: testAccCheckRedshiftDatasharePrivilegeDestroy,
 		Steps: []resource.TestStep{

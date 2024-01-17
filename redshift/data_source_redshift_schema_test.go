@@ -11,9 +11,12 @@ import (
 )
 
 func TestAccDataSourceRedshiftSchema_basic(t *testing.T) {
+	ctx, cancel := testContext(t)
+	defer cancel()
+
 	schemaName := strings.ReplaceAll(acctest.RandomWithPrefix("tf_acc_data_basic"), "-", "_")
 	resource.ParallelTest(t, resource.TestCase{
-		PreCheck:     func() { testAccPreCheck(t) },
+		PreCheck:     func() { testAccPreCheck(ctx, t) },
 		Providers:    testAccProviders,
 		CheckDestroy: testAccCheckRedshiftSchemaDestroy,
 		Steps: []resource.TestStep{
@@ -47,6 +50,9 @@ data "redshift_schema" "schema" {
 //	REDSHIFT_EXTERNAL_SCHEMA_DATA_CATALOG_DATABASE - source database name
 //	REDSHIFT_EXTERNAL_SCHEMA_RDS_DATA_CATALOG_IAM_ROLE_ARNS - comma-separated list of ARNs to use
 func TestAccDataSourceRedshiftSchema_ExternalDataCatalog(t *testing.T) {
+	ctx, cancel := testContext(t)
+	defer cancel()
+
 	dbName := getEnvOrSkip("REDSHIFT_EXTERNAL_SCHEMA_DATA_CATALOG_DATABASE", t)
 	iamRoleArnsRaw := getEnvOrSkip("REDSHIFT_EXTERNAL_SCHEMA_DATA_CATALOG_IAM_ROLE_ARNS", t)
 	iamRoleArns := strings.Split(iamRoleArnsRaw, ",")
@@ -68,7 +74,7 @@ data "redshift_schema" "spectrum" {
 `,
 		schemaNameAttr, schemaName, schemaExternalSchemaAttr, dbName, tfArray(iamRoleArns))
 	resource.Test(t, resource.TestCase{
-		PreCheck:     func() { testAccPreCheck(t) },
+		PreCheck:     func() { testAccPreCheck(ctx, t) },
 		Providers:    testAccProviders,
 		CheckDestroy: testAccCheckRedshiftSchemaDestroy,
 		Steps: []resource.TestStep{
@@ -105,6 +111,9 @@ data "redshift_schema" "spectrum" {
 //
 //	REDSHIFT_EXTERNAL_SCHEMA_HIVE_PORT - hive metastore port. Default is 9083
 func TestAccDataSourceRedshiftSchema_ExternalHive(t *testing.T) {
+	ctx, cancel := testContext(t)
+	defer cancel()
+
 	dbName := getEnvOrSkip("REDSHIFT_EXTERNAL_SCHEMA_HIVE_DATABASE", t)
 	dbHostname := getEnvOrSkip("REDSHIFT_EXTERNAL_SCHEMA_HIVE_HOSTNAME", t)
 	iamRoleArnsRaw := getEnvOrSkip("REDSHIFT_EXTERNAL_SCHEMA_HIVE_IAM_ROLE_ARNS", t)
@@ -133,7 +142,7 @@ data "redshift_schema" "hive" {
 `,
 		schemaNameAttr, schemaName, schemaExternalSchemaAttr, dbName, dbHostname, dbPort, tfArray(iamRoleArns))
 	resource.Test(t, resource.TestCase{
-		PreCheck:     func() { testAccPreCheck(t) },
+		PreCheck:     func() { testAccPreCheck(ctx, t) },
 		Providers:    testAccProviders,
 		CheckDestroy: testAccCheckRedshiftSchemaDestroy,
 		Steps: []resource.TestStep{
@@ -174,6 +183,9 @@ data "redshift_schema" "hive" {
 //	REDSHIFT_EXTERNAL_SCHEMA_RDS_POSTGRES_PORT - RDS port. Default is 5432
 //	REDSHIFT_EXTERNAL_SCHEMA_RDS_POSTGRES_SCHEMA - source database schema. Default is "public"
 func TestAccDataSourceRedshiftSchema_ExternalRdsPostgres(t *testing.T) {
+	ctx, cancel := testContext(t)
+	defer cancel()
+
 	dbName := getEnvOrSkip("REDSHIFT_EXTERNAL_SCHEMA_RDS_POSTGRES_DATABASE", t)
 	dbHostname := getEnvOrSkip("REDSHIFT_EXTERNAL_SCHEMA_RDS_POSTGRES_HOSTNAME", t)
 	iamRoleArnsRaw := getEnvOrSkip("REDSHIFT_EXTERNAL_SCHEMA_RDS_POSTGRES_IAM_ROLE_ARNS", t)
@@ -209,7 +221,7 @@ data "redshift_schema" "postgres" {
 `,
 		schemaNameAttr, schemaName, schemaExternalSchemaAttr, dbName, dbHostname, dbPort, dbSchema, tfArray(iamRoleArns), dbSecretArn)
 	resource.Test(t, resource.TestCase{
-		PreCheck:     func() { testAccPreCheck(t) },
+		PreCheck:     func() { testAccPreCheck(ctx, t) },
 		Providers:    testAccProviders,
 		CheckDestroy: testAccCheckRedshiftSchemaDestroy,
 		Steps: []resource.TestStep{
@@ -251,6 +263,9 @@ data "redshift_schema" "postgres" {
 //
 //	REDSHIFT_EXTERNAL_SCHEMA_RDS_MYSQL_PORT - RDS port. Default is 3306
 func TestAccDataSourceRedshiftSchema_ExternalRdsMysql(t *testing.T) {
+	ctx, cancel := testContext(t)
+	defer cancel()
+
 	dbName := getEnvOrSkip("REDSHIFT_EXTERNAL_SCHEMA_RDS_MYSQL_DATABASE", t)
 	dbHostname := getEnvOrSkip("REDSHIFT_EXTERNAL_SCHEMA_RDS_MYSQL_HOSTNAME", t)
 	iamRoleArnsRaw := getEnvOrSkip("REDSHIFT_EXTERNAL_SCHEMA_RDS_MYSQL_IAM_ROLE_ARNS", t)
@@ -281,7 +296,7 @@ data "redshift_schema" "mysql" {
 `,
 		schemaNameAttr, schemaName, schemaExternalSchemaAttr, dbName, dbHostname, dbPort, tfArray(iamRoleArns), dbSecretArn)
 	resource.Test(t, resource.TestCase{
-		PreCheck:     func() { testAccPreCheck(t) },
+		PreCheck:     func() { testAccPreCheck(ctx, t) },
 		Providers:    testAccProviders,
 		CheckDestroy: testAccCheckRedshiftSchemaDestroy,
 		Steps: []resource.TestStep{
@@ -319,6 +334,9 @@ data "redshift_schema" "mysql" {
 //
 //	REDSHIFT_EXTERNAL_SCHEMA_REDSHIFT_SCHEMA - datashare schema name. Default is "public"
 func TestAccDataSourceRedshiftSchema_ExternalRedshift(t *testing.T) {
+	ctx, cancel := testContext(t)
+	defer cancel()
+
 	dbName := getEnvOrSkip("REDSHIFT_EXTERNAL_SCHEMA_REDSHIFT_DATABASE", t)
 	dbSchema := os.Getenv("REDSHIFT_EXTERNAL_SCHEMA_REDSHIFT_SCHEMA")
 	if dbSchema == "" {
@@ -342,7 +360,7 @@ data "redshift_schema" "redshift" {
 `,
 		schemaNameAttr, schemaName, schemaExternalSchemaAttr, dbName, dbSchema)
 	resource.Test(t, resource.TestCase{
-		PreCheck:     func() { testAccPreCheck(t) },
+		PreCheck:     func() { testAccPreCheck(ctx, t) },
 		Providers:    testAccProviders,
 		CheckDestroy: testAccCheckRedshiftSchemaDestroy,
 		Steps: []resource.TestStep{

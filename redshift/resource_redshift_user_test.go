@@ -16,8 +16,11 @@ import (
 )
 
 func TestAccRedshiftUser_Basic(t *testing.T) {
+	ctx, cancel := testContext(t)
+	defer cancel()
+
 	resource.Test(t, resource.TestCase{
-		PreCheck:     func() { testAccPreCheck(t) },
+		PreCheck:     func() { testAccPreCheck(ctx, t) },
 		Providers:    testAccProviders,
 		CheckDestroy: testAccCheckRedshiftUserDestroy,
 		Steps: []resource.TestStep{
@@ -66,6 +69,8 @@ func TestAccRedshiftUser_Basic(t *testing.T) {
 }
 
 func TestAccRedshiftUser_Update(t *testing.T) {
+	ctx, cancel := testContext(t)
+	defer cancel()
 
 	var configCreate = `
 resource "redshift_user" "update_user" {
@@ -94,7 +99,7 @@ resource "redshift_user" "update_user" {
 }
 `
 	resource.Test(t, resource.TestCase{
-		PreCheck:     func() { testAccPreCheck(t) },
+		PreCheck:     func() { testAccPreCheck(ctx, t) },
 		Providers:    testAccProviders,
 		CheckDestroy: testAccCheckRedshiftUserDestroy,
 		Steps: []resource.TestStep{
@@ -150,6 +155,8 @@ resource "redshift_user" "update_user" {
 }
 
 func TestAccRedshiftUser_UpdateToSuperuser(t *testing.T) {
+	ctx, cancel := testContext(t)
+	defer cancel()
 
 	var configCreate = `
 resource "redshift_user" "update_superuser" {
@@ -166,7 +173,7 @@ resource "redshift_user" "update_superuser" {
 }
 `
 	resource.Test(t, resource.TestCase{
-		PreCheck:     func() { testAccPreCheck(t) },
+		PreCheck:     func() { testAccPreCheck(ctx, t) },
 		Providers:    testAccProviders,
 		CheckDestroy: testAccCheckRedshiftUserDestroy,
 		Steps: []resource.TestStep{
@@ -212,6 +219,9 @@ resource "redshift_user" "update_superuser" {
 }
 
 func TestAccRedshiftUser_SuperuserRequiresPassword(t *testing.T) {
+	ctx, cancel := testContext(t)
+	defer cancel()
+
 	userName := strings.ReplaceAll(acctest.RandomWithPrefix("tf_acc_superuser"), "-", "_")
 	config := fmt.Sprintf(`
 resource "redshift_user" "superuser" {
@@ -221,7 +231,7 @@ resource "redshift_user" "superuser" {
 `, userName)
 
 	resource.Test(t, resource.TestCase{
-		PreCheck:     func() { testAccPreCheck(t) },
+		PreCheck:     func() { testAccPreCheck(ctx, t) },
 		Providers:    testAccProviders,
 		CheckDestroy: testAccCheckRedshiftUserDestroy,
 		Steps: []resource.TestStep{
@@ -234,6 +244,9 @@ resource "redshift_user" "superuser" {
 }
 
 func TestAccRedshiftUser_SuperuserFalseDoesntRequiresPassword(t *testing.T) {
+	ctx, cancel := testContext(t)
+	defer cancel()
+
 	userName := strings.ReplaceAll(acctest.RandomWithPrefix("tf_acc_superuser"), "-", "_")
 	config := fmt.Sprintf(`
 resource "redshift_user" "superuser" {
@@ -243,7 +256,7 @@ resource "redshift_user" "superuser" {
 `, userName)
 
 	resource.Test(t, resource.TestCase{
-		PreCheck:     func() { testAccPreCheck(t) },
+		PreCheck:     func() { testAccPreCheck(ctx, t) },
 		Providers:    testAccProviders,
 		CheckDestroy: testAccCheckRedshiftUserDestroy,
 		Steps: []resource.TestStep{
@@ -255,6 +268,9 @@ resource "redshift_user" "superuser" {
 }
 
 func TestAccRedshiftUser_SuperuserSyslogAccess(t *testing.T) {
+	ctx, cancel := testContext(t)
+	defer cancel()
+
 	tests := map[string]struct {
 		isSuperuser  bool
 		syslogAccess string
@@ -296,7 +312,7 @@ func TestAccRedshiftUser_SuperuserSyslogAccess(t *testing.T) {
 			`, userName, test.isSuperuser, test.syslogAccess)
 
 			resource.Test(t, resource.TestCase{
-				PreCheck:     func() { testAccPreCheck(t) },
+				PreCheck:     func() { testAccPreCheck(ctx, t) },
 				Providers:    testAccProviders,
 				CheckDestroy: testAccCheckRedshiftUserDestroy,
 				Steps: []resource.TestStep{
@@ -312,6 +328,9 @@ func TestAccRedshiftUser_SuperuserSyslogAccess(t *testing.T) {
 }
 
 func TestAccRedshiftUser_SuperuserUnknownPassword(t *testing.T) {
+	ctx, cancel := testContext(t)
+	defer cancel()
+
 	userName := strings.ReplaceAll(acctest.RandomWithPrefix("tf_acc_superuser"), "-", "_")
 	config := fmt.Sprintf(`
 resource "redshift_user" "superuser" {
@@ -356,7 +375,7 @@ resource "unknown_string" "password" {}
 	}
 
 	resource.Test(t, resource.TestCase{
-		PreCheck:     func() { testAccPreCheck(t) },
+		PreCheck:     func() { testAccPreCheck(ctx, t) },
 		Providers:    providers,
 		CheckDestroy: testAccCheckRedshiftUserDestroy,
 		Steps: []resource.TestStep{

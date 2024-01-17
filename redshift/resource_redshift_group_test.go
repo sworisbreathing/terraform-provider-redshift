@@ -12,8 +12,11 @@ import (
 )
 
 func TestAccRedshiftGroup_Basic(t *testing.T) {
+	ctx, cancel := testContext(t)
+	defer cancel()
+
 	resource.Test(t, resource.TestCase{
-		PreCheck:     func() { testAccPreCheck(t) },
+		PreCheck:     func() { testAccPreCheck(ctx, t) },
 		Providers:    testAccProviders,
 		CheckDestroy: testAccCheckRedshiftGroupDestroy,
 		Steps: []resource.TestStep{
@@ -40,6 +43,9 @@ func TestAccRedshiftGroup_Basic(t *testing.T) {
 }
 
 func TestAccRedshiftGroup_Update(t *testing.T) {
+	ctx, cancel := testContext(t)
+	defer cancel()
+
 	groupNames := []string{
 		strings.ReplaceAll(acctest.RandomWithPrefix("TF_acc_group"), "-", "_"),
 		strings.ReplaceAll(acctest.RandomWithPrefix("tf_acc_group"), "-", "_"),
@@ -86,7 +92,7 @@ func TestAccRedshiftGroup_Update(t *testing.T) {
 		}
 		`, userName1, userName2, userName3, groupNameUpdated)
 		resource.Test(t, resource.TestCase{
-			PreCheck:     func() { testAccPreCheck(t) },
+			PreCheck:     func() { testAccPreCheck(ctx, t) },
 			Providers:    testAccProviders,
 			CheckDestroy: testAccCheckRedshiftGroupDestroy,
 			Steps: []resource.TestStep{
@@ -124,6 +130,9 @@ func TestAccRedshiftGroup_Update(t *testing.T) {
 }
 
 func TestAccRedshiftGroup_RemoveExistingUser(t *testing.T) {
+	ctx, cancel := testContext(t)
+	defer cancel()
+
 	groupName := strings.ReplaceAll(acctest.RandomWithPrefix("TF_acc_group"), "-", "_")
 	userName1 := strings.ReplaceAll(acctest.RandomWithPrefix("TF_Acc_Group_User"), "-", "_")
 	userName2 := strings.ReplaceAll(acctest.RandomWithPrefix("tf_acc_group_user"), "-", "_")
@@ -163,7 +172,7 @@ resource "redshift_user" "user2" {
 }
 `, groupName, userName1, userName2)
 	resource.Test(t, resource.TestCase{
-		PreCheck:     func() { testAccPreCheck(t) },
+		PreCheck:     func() { testAccPreCheck(ctx, t) },
 		Providers:    testAccProviders,
 		CheckDestroy: testAccCheckRedshiftGroupDestroy,
 		Steps: []resource.TestStep{

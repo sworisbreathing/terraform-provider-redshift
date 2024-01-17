@@ -12,6 +12,9 @@ import (
 )
 
 func TestAccRedshiftGrant_SchemaToPublic(t *testing.T) {
+	ctx, cancel := testContext(t)
+	defer cancel()
+
 	schemaName := strings.ReplaceAll(acctest.RandomWithPrefix("tf_schema"), "-", "_")
 	userName := strings.ReplaceAll(acctest.RandomWithPrefix("tf_user"), "-", "_")
 	config := fmt.Sprintf(`
@@ -41,7 +44,7 @@ resource "redshift_grant" "user" {
 `, schemaName, userName)
 
 	resource.Test(t, resource.TestCase{
-		PreCheck:     func() { testAccPreCheck(t) },
+		PreCheck:     func() { testAccPreCheck(ctx, t) },
 		Providers:    testAccProviders,
 		CheckDestroy: func(s *terraform.State) error { return nil },
 		Steps: []resource.TestStep{
@@ -61,6 +64,9 @@ resource "redshift_grant" "user" {
 }
 
 func TestAccRedshiftGrant_DatabaseToPublic(t *testing.T) {
+	ctx, cancel := testContext(t)
+	defer cancel()
+
 	config := `
 resource "redshift_grant" "public" {
 	group = "public"
@@ -69,7 +75,7 @@ resource "redshift_grant" "public" {
 }
 `
 	resource.Test(t, resource.TestCase{
-		PreCheck:     func() { testAccPreCheck(t) },
+		PreCheck:     func() { testAccPreCheck(ctx, t) },
 		Providers:    testAccProviders,
 		CheckDestroy: func(s *terraform.State) error { return nil },
 		Steps: []resource.TestStep{
@@ -88,6 +94,9 @@ resource "redshift_grant" "public" {
 }
 
 func TestAccRedshiftGrant_LanguageToPublic(t *testing.T) {
+	ctx, cancel := testContext(t)
+	defer cancel()
+
 	config := `
 resource "redshift_grant" "public" {
 	group = "public"
@@ -97,7 +106,7 @@ resource "redshift_grant" "public" {
 }
 `
 	resource.Test(t, resource.TestCase{
-		PreCheck:     func() { testAccPreCheck(t) },
+		PreCheck:     func() { testAccPreCheck(ctx, t) },
 		Providers:    testAccProviders,
 		CheckDestroy: func(s *terraform.State) error { return nil },
 		Steps: []resource.TestStep{
@@ -116,6 +125,9 @@ resource "redshift_grant" "public" {
 }
 
 func TestAccRedshiftGrant_TableToPublic(t *testing.T) {
+	ctx, cancel := testContext(t)
+	defer cancel()
+
 	config := `
 resource "redshift_grant" "public" {
 	group = "public"
@@ -127,7 +139,7 @@ resource "redshift_grant" "public" {
 }
 `
 	resource.Test(t, resource.TestCase{
-		PreCheck:     func() { testAccPreCheck(t) },
+		PreCheck:     func() { testAccPreCheck(ctx, t) },
 		Providers:    testAccProviders,
 		CheckDestroy: func(s *terraform.State) error { return nil },
 		Steps: []resource.TestStep{
@@ -156,6 +168,9 @@ resource "redshift_grant" "public" {
 }
 
 func TestAccRedshiftGrant_BasicDatabase(t *testing.T) {
+	ctx, cancel := testContext(t)
+	defer cancel()
+
 	groupNames := []string{
 		strings.ReplaceAll(acctest.RandomWithPrefix("tf_acc_group"), "-", "_"),
 		strings.ReplaceAll(acctest.RandomWithPrefix("tf_acc_group@tf_acc_domain.tld"), "-", "_"),
@@ -190,7 +205,7 @@ func TestAccRedshiftGrant_BasicDatabase(t *testing.T) {
 		}
 		`, groupName, userName)
 		resource.Test(t, resource.TestCase{
-			PreCheck:     func() { testAccPreCheck(t) },
+			PreCheck:     func() { testAccPreCheck(ctx, t) },
 			Providers:    testAccProviders,
 			CheckDestroy: func(s *terraform.State) error { return nil },
 			Steps: []resource.TestStep{
@@ -217,6 +232,9 @@ func TestAccRedshiftGrant_BasicDatabase(t *testing.T) {
 }
 
 func TestAccRedshiftGrant_BasicSchema(t *testing.T) {
+	ctx, cancel := testContext(t)
+	defer cancel()
+
 	groupNames := []string{
 		strings.ReplaceAll(acctest.RandomWithPrefix("tf_acc_group"), "-", "_"),
 		strings.ReplaceAll(acctest.RandomWithPrefix("tf_acc_group@tf_acc_domain.tld"), "-", "_"),
@@ -261,7 +279,7 @@ func TestAccRedshiftGrant_BasicSchema(t *testing.T) {
 		}
 		`, userName, groupName, schemaName)
 		resource.Test(t, resource.TestCase{
-			PreCheck:     func() { testAccPreCheck(t) },
+			PreCheck:     func() { testAccPreCheck(ctx, t) },
 			Providers:    testAccProviders,
 			CheckDestroy: func(s *terraform.State) error { return nil },
 			Steps: []resource.TestStep{
@@ -289,6 +307,9 @@ func TestAccRedshiftGrant_BasicSchema(t *testing.T) {
 }
 
 func TestAccRedshiftGrant_BasicTable(t *testing.T) {
+	ctx, cancel := testContext(t)
+	defer cancel()
+
 	groupNames := []string{
 		strings.ReplaceAll(acctest.RandomWithPrefix("tf_acc_group"), "-", "_"),
 		strings.ReplaceAll(acctest.RandomWithPrefix("tf_acc_group@tf_acc_domain.tld"), "-", "_"),
@@ -329,7 +350,7 @@ func TestAccRedshiftGrant_BasicTable(t *testing.T) {
 		}
 		`, groupName, userName)
 		resource.Test(t, resource.TestCase{
-			PreCheck:     func() { testAccPreCheck(t) },
+			PreCheck:     func() { testAccPreCheck(ctx, t) },
 			Providers:    testAccProviders,
 			CheckDestroy: func(s *terraform.State) error { return nil },
 			Steps: []resource.TestStep{
@@ -375,6 +396,9 @@ func TestAccRedshiftGrant_BasicTable(t *testing.T) {
 }
 
 func TestAccRedshiftGrant_BasicCallables(t *testing.T) {
+	ctx, cancel := testContext(t)
+	defer cancel()
+
 	groupNames := []string{
 		strings.ReplaceAll(acctest.RandomWithPrefix("tf_acc_group"), "-", "_"),
 		strings.ReplaceAll(acctest.RandomWithPrefix("tf_acc_group@tf_acc_domain.tld"), "-", "_"),
@@ -388,7 +412,7 @@ func TestAccRedshiftGrant_BasicCallables(t *testing.T) {
 	for i, groupName := range groupNames {
 		userName := userNames[i]
 		resource.Test(t, resource.TestCase{
-			PreCheck:     func() { testAccPreCheck(t) },
+			PreCheck:     func() { testAccPreCheck(ctx, t) },
 			Providers:    testAccProviders,
 			CheckDestroy: func(s *terraform.State) error { return nil },
 			Steps: []resource.TestStep{
@@ -462,6 +486,9 @@ func TestAccRedshiftGrant_BasicCallables(t *testing.T) {
 }
 
 func TestAccRedshiftGrant_BasicLanguage(t *testing.T) {
+	ctx, cancel := testContext(t)
+	defer cancel()
+
 	groupNames := []string{
 		strings.ReplaceAll(acctest.RandomWithPrefix("tf_acc_group"), "-", "_"),
 		strings.ReplaceAll(acctest.RandomWithPrefix("tf_acc_group@tf_acc_domain.tld"), "-", "_"),
@@ -501,7 +528,7 @@ func TestAccRedshiftGrant_BasicLanguage(t *testing.T) {
 		}
 		`, userName, groupName, addedLanguage, secondLanguage)
 		resource.Test(t, resource.TestCase{
-			PreCheck:     func() { testAccPreCheck(t) },
+			PreCheck:     func() { testAccPreCheck(ctx, t) },
 			Providers:    testAccProviders,
 			CheckDestroy: func(s *terraform.State) error { return nil },
 			Steps: []resource.TestStep{
@@ -527,6 +554,9 @@ func TestAccRedshiftGrant_BasicLanguage(t *testing.T) {
 }
 
 func TestAccRedshiftGrant_Regression_GH_Issue_24(t *testing.T) {
+	ctx, cancel := testContext(t)
+	defer cancel()
+
 	userNames := []string{
 		strings.ReplaceAll(acctest.RandomWithPrefix("tf_acc_user"), "-", "_"),
 		strings.ReplaceAll(acctest.RandomWithPrefix("tf_acc_user@tf_acc_domain.tld"), "-", "_"),
@@ -563,7 +593,7 @@ func TestAccRedshiftGrant_Regression_GH_Issue_24(t *testing.T) {
 		}
 		`, userName, schemaName, dbName)
 		resource.Test(t, resource.TestCase{
-			PreCheck:     func() { testAccPreCheck(t) },
+			PreCheck:     func() { testAccPreCheck(ctx, t) },
 			Providers:    testAccProviders,
 			CheckDestroy: func(s *terraform.State) error { return nil },
 			Steps: []resource.TestStep{
@@ -583,6 +613,9 @@ func TestAccRedshiftGrant_Regression_GH_Issue_24(t *testing.T) {
 }
 
 func TestAccRedshiftGrant_Regression_Issue_43(t *testing.T) {
+	ctx, cancel := testContext(t)
+	defer cancel()
+
 	userName := strings.ReplaceAll(acctest.RandomWithPrefix("tf_acc_user_grant"), "-", "_")
 
 	config := fmt.Sprintf(`
@@ -626,7 +659,7 @@ resource "redshift_grant" "grants2" {
 `, userName)
 
 	resource.Test(t, resource.TestCase{
-		PreCheck:     func() { testAccPreCheck(t) },
+		PreCheck:     func() { testAccPreCheck(ctx, t) },
 		Providers:    testAccProviders,
 		CheckDestroy: func(s *terraform.State) error { return nil },
 		Steps: []resource.TestStep{

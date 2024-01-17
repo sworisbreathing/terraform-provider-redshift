@@ -3,6 +3,7 @@
 package redshift
 
 import (
+	"context"
 	"fmt"
 	"os"
 	"strings"
@@ -24,4 +25,11 @@ func tfArray(s []string) string {
 	semiformat := fmt.Sprintf("%q\n", s)
 	tokens := strings.Split(semiformat, " ")
 	return fmt.Sprintf(strings.Join(tokens, ","))
+}
+
+func testContext(t *testing.T) (context.Context, context.CancelFunc) {
+	if deadline, ok := t.Deadline(); ok {
+		return context.WithDeadline(context.Background(), deadline)
+	}
+	return context.WithCancel(context.Background())
 }

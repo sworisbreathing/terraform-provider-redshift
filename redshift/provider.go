@@ -12,6 +12,7 @@ import (
 	"github.com/aws/aws-sdk-go-v2/credentials/stscreds"
 	"github.com/aws/aws-sdk-go-v2/service/redshift"
 	"github.com/aws/aws-sdk-go-v2/service/sts"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/validation"
 )
@@ -143,14 +144,14 @@ func Provider() *schema.Provider {
 			"redshift_database":  dataSourceRedshiftDatabase(),
 			"redshift_namespace": dataSourceRedshiftNamespace(),
 		},
-		ConfigureFunc: providerConfigure,
+		ConfigureContextFunc: providerConfigure,
 	}
 }
 
-func providerConfigure(d *schema.ResourceData) (interface{}, error) {
-	username, password, err := resolveCredentials(d)
+func providerConfigure(ctx context.Context, d *schema.ResourceData) (interface{}, diag.Diagnostics) {
+	username, password, err := resolveCredentials(ctx, d)
 	if err != nil {
-		return nil, err
+		return nil, diag.FromErr(err)
 	}
 	config := Config{
 		Host:     d.Get("host").(string),
@@ -168,14 +169,14 @@ func providerConfigure(d *schema.ResourceData) (interface{}, error) {
 	return client, nil
 }
 
-func resolveCredentials(d *schema.ResourceData) (string, string, error) {
+func resolveCredentials(ctx context.Context, d *schema.ResourceData) (string, string, error) {
 	username, ok := d.GetOk("username")
 	if (!ok) || username == nil {
 		return "", "", fmt.Errorf("Username is required")
 	}
 	if _, useTemporaryCredentials := d.GetOk("temporary_credentials.0"); useTemporaryCredentials {
 		log.Println("[DEBUG] using temporary credentials authentication")
-		dbUser, dbPassword, err := temporaryCredentials(username.(string), d)
+		dbUser, dbPassword, err := temporaryCredentials(ctx, username.(string), d)
 		log.Printf("[DEBUG] got temporary credentials with username %s\n", dbUser)
 		return dbUser, dbPassword, err
 	}
@@ -186,8 +187,8 @@ func resolveCredentials(d *schema.ResourceData) (string, string, error) {
 }
 
 // temporaryCredentials gets temporary credentials using GetClusterCredentials
-func temporaryCredentials(username string, d *schema.ResourceData) (string, string, error) {
-	sdkClient, err := redshiftSdkClient(d)
+func temporaryCredentials(ctx context.Context, username string, d *schema.ResourceData) (string, string, error) {
+	sdkClient, err := redshiftSdkClient(ctx, d)
 	if err != nil {
 		return "", "", err
 	}
@@ -224,15 +225,15 @@ func temporaryCredentials(username string, d *schema.ResourceData) (string, stri
 		}
 	}
 	log.Println("[DEBUG] making GetClusterCredentials request")
-	response, err := sdkClient.GetClusterCredentials(context.TODO(), input)
+	response, err := sdkClient.GetClusterCredentials(ctx, input)
 	if err != nil {
 		return "", "", err
 	}
 	return aws.ToString(response.DbUser), aws.ToString(response.DbPassword), nil
 }
 
-func redshiftSdkClient(d *schema.ResourceData) (*redshift.Client, error) {
-	cfg, err := config.LoadDefaultConfig(context.TODO())
+func redshiftSdkClient(ctx context.Context, d *schema.ResourceData) (*redshift.Client, error) {
+	cfg, err := config.LoadDefaultConfig(ctx)
 	if err != nil {
 		return nil, err
 	}

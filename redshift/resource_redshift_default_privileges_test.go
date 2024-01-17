@@ -13,6 +13,9 @@ import (
 )
 
 func TestAccRedshiftDefaultPrivileges_Basic(t *testing.T) {
+	ctx, cancel := testContext(t)
+	defer cancel()
+
 	groupNames := []string{
 		strings.ReplaceAll(acctest.RandomWithPrefix("tf_acc_group"), "-", "_"),
 		strings.ReplaceAll(acctest.RandomWithPrefix("tf_acc_group@tf_acc_domain.tld"), "-", "_"),
@@ -49,7 +52,7 @@ func TestAccRedshiftDefaultPrivileges_Basic(t *testing.T) {
 		}
 		`, groupName, userName)
 		resource.Test(t, resource.TestCase{
-			PreCheck:     func() { testAccPreCheck(t) },
+			PreCheck:     func() { testAccPreCheck(ctx, t) },
 			Providers:    testAccProviders,
 			CheckDestroy: testAccCheckDefaultPrivilegesDestory(defaultPrivilegesAllSchemasID, 100, "r", groupName),
 			Steps: []resource.TestStep{
@@ -89,6 +92,9 @@ func TestAccRedshiftDefaultPrivileges_Basic(t *testing.T) {
 }
 
 func TestAccRedshiftDefaultPrivileges_UpdateToRevoke(t *testing.T) {
+	ctx, cancel := testContext(t)
+	defer cancel()
+
 	groupNames := []string{
 		strings.ReplaceAll(acctest.RandomWithPrefix("tf_acc_group"), "-", "_"),
 		strings.ReplaceAll(acctest.RandomWithPrefix("tf_acc_group@tf_acc_domain.tld"), "-", "_"),
@@ -150,7 +156,7 @@ func TestAccRedshiftDefaultPrivileges_UpdateToRevoke(t *testing.T) {
 		}
 		`, groupName, userName)
 		resource.Test(t, resource.TestCase{
-			PreCheck:     func() { testAccPreCheck(t) },
+			PreCheck:     func() { testAccPreCheck(ctx, t) },
 			Providers:    testAccProviders,
 			CheckDestroy: testAccCheckDefaultPrivilegesDestory(defaultPrivilegesAllSchemasID, 100, "r", groupName),
 			Steps: []resource.TestStep{
@@ -204,6 +210,9 @@ func TestAccRedshiftDefaultPrivileges_UpdateToRevoke(t *testing.T) {
 }
 
 func TestAccRedshiftDefaultPrivileges_BothUserGroupError(t *testing.T) {
+	ctx, cancel := testContext(t)
+	defer cancel()
+
 	config := `
 resource "redshift_default_privileges" "both" {
   user = "test_user"
@@ -215,7 +224,7 @@ resource "redshift_default_privileges" "both" {
 }
 `
 	resource.Test(t, resource.TestCase{
-		PreCheck:  func() { testAccPreCheck(t) },
+		PreCheck:  func() { testAccPreCheck(ctx, t) },
 		Providers: testAccProviders,
 		Steps: []resource.TestStep{
 			{
@@ -227,6 +236,9 @@ resource "redshift_default_privileges" "both" {
 }
 
 func TestAccRedshiftDefaultPrivileges_NoUserGroupError(t *testing.T) {
+	ctx, cancel := testContext(t)
+	defer cancel()
+
 	config := `
 resource "redshift_default_privileges" "none" {
   owner = "root"
@@ -235,7 +247,7 @@ resource "redshift_default_privileges" "none" {
 }
 `
 	resource.Test(t, resource.TestCase{
-		PreCheck:  func() { testAccPreCheck(t) },
+		PreCheck:  func() { testAccPreCheck(ctx, t) },
 		Providers: testAccProviders,
 		Steps: []resource.TestStep{
 			{

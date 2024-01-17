@@ -13,6 +13,9 @@ import (
 )
 
 func TestAccRedshiftDatashare_Basic(t *testing.T) {
+	ctx, cancel := testContext(t)
+	defer cancel()
+
 	_ = getEnvOrSkip("REDSHIFT_DATASHARE_SUPPORTED", t)
 	me := strings.ToLower(permanentUsername(os.Getenv("REDSHIFT_USER")))
 	shareName := strings.ReplaceAll(acctest.RandomWithPrefix("tf_acc_datashare_basic"), "-", "_")
@@ -54,7 +57,7 @@ resource "redshift_datashare" "basic" {
 }
 `, schemaNameAttr, shareName, schemaCascadeOnDeleteAttr, userNameAttr, dataShareNameAttr, dataShareOwnerAttr, dataSharePublicAccessibleAttr, dataShareSchemasAttr)
 	resource.ParallelTest(t, resource.TestCase{
-		PreCheck:     func() { testAccPreCheck(t) },
+		PreCheck:     func() { testAccPreCheck(ctx, t) },
 		Providers:    testAccProviders,
 		CheckDestroy: testAccCheckRedshiftDatashareDestroy,
 		Steps: []resource.TestStep{

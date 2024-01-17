@@ -10,9 +10,12 @@ import (
 )
 
 func TestAccDataSourceRedshiftDatabase_basic(t *testing.T) {
+	ctx, cancel := testContext(t)
+	defer cancel()
+
 	dbName := strings.ReplaceAll(acctest.RandomWithPrefix("tf_acc_data_basic"), "-", "_")
 	resource.ParallelTest(t, resource.TestCase{
-		PreCheck:  func() { testAccPreCheck(t) },
+		PreCheck:  func() { testAccPreCheck(ctx, t) },
 		Providers: testAccProviders,
 		Steps: []resource.TestStep{
 			{

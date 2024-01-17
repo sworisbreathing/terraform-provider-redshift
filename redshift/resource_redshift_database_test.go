@@ -12,9 +12,12 @@ import (
 )
 
 func TestAccResourceRedshiftDatabase_Basic(t *testing.T) {
+	ctx, cancel := testContext(t)
+	defer cancel()
+
 	dbName := strings.ReplaceAll(acctest.RandomWithPrefix("tf_acc_resource_basic"), "-", "_")
 	resource.ParallelTest(t, resource.TestCase{
-		PreCheck:     func() { testAccPreCheck(t) },
+		PreCheck:     func() { testAccPreCheck(ctx, t) },
 		Providers:    testAccProviders,
 		CheckDestroy: testAccCheckRedshiftDatabaseDestroy,
 		Steps: []resource.TestStep{
@@ -45,6 +48,8 @@ resource "redshift_database" "db" {
 }
 
 func TestAccResourceRedshiftDatabase_Update(t *testing.T) {
+	ctx, cancel := testContext(t)
+	defer cancel()
 
 	dbNameOriginal := strings.ReplaceAll(acctest.RandomWithPrefix("tf_acc_resource_original"), "-", "_")
 	dbNameNew := strings.ReplaceAll(acctest.RandomWithPrefix("tf_acc_resource_update"), "-", "_")
@@ -69,7 +74,7 @@ resource "redshift_user" "user" {
 	`, databaseNameAttr, dbNameNew, databaseOwnerAttr, userNameAttr, databaseConnLimitAttr, userName)
 
 	resource.ParallelTest(t, resource.TestCase{
-		PreCheck:     func() { testAccPreCheck(t) },
+		PreCheck:     func() { testAccPreCheck(ctx, t) },
 		Providers:    testAccProviders,
 		CheckDestroy: testAccCheckRedshiftDatabaseDestroy,
 		Steps: []resource.TestStep{
